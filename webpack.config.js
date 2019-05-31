@@ -30,4 +30,28 @@ function getEntry() {
   return eArr
 }
 
-getEntry()
+function getHtmlConfig() {
+
+}
+
+module.exports = {
+  entry: getEntry(),
+  output: {
+    path: path.resolve(__dirname, 'dist/js'),
+    filename: '[name].js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules)/,
+        include: /src/,
+        use: [
+          {
+
+          }
+        ]
+      }
+    ]
+  }
+}
