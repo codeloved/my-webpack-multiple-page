@@ -1,0 +1,7 @@
+.a .b {
+  color: red;
+  display: flex;
+  -webkit-transform: translateX(50px);
+          transform: translateX(50px);
+}
+

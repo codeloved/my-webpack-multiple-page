@@ -1,0 +1,18 @@
+{
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "edge": "17",
+          "firefox": "60",
+          "chrome": "67",
+          "safari": "11.1",
+          "ie": "11"
+        },
+        // usage 不需要在入口文件或者打包的入口里面添加或者import polyfill,babel会自动导入需要的polyfill, 导入的为源码中出现的需要垫片,并且上面targets不支持的属性会导入
+        "useBuiltIns": "usage",
+      },
+    ],
+  ]
+}

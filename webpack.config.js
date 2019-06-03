@@ -8,6 +8,7 @@ var autoprefixer = require('autoprefixer') // 给浏览器加css兼容性前缀
 var os = require('os') // node模块
 var portfinder = require('portfinder') // 发现可用端口
 var fs = require('fs') // node模块
+var { CleanWebpackPlugin } = require('clean-webpack-plugin') // 清除webpack打包目录
 
 // 动态添加入口
 function getEntry() {
@@ -17,17 +18,14 @@ function getEntry() {
     var start = name.indexOf('src/') + 4
     var many = name.length - 3
     var eArr = []
-    var n = name.slice(start, many) // js/index js/test/test
+    var key = name.slice(start, many) // js/index js/test/test
     // 此key为js/后的名称,因为key不能重复,所以js下的一级目录和js直属文件不能相同,如上,分别取得index和第一个test,两个名称不能相同
-    var key = n.split('/')[1]
-    // bable垫片,babel只能转义箭头函数,class等,不能转换Map，Set，Promise等新的全局对象,需要将垫片代码加入文件的头部去兼容某些不支持此语法的
-    // 浏览器,因为是多文件,所以每个头部都要加入此代码,并且,一定要在数组的最前面, 注意命名变量时不要使用这些全局对象,作用域会覆盖全局对象
-    eArr.push('babel-polyfill')
+    // var key = n.split('/')[1]
     eArr.push(name)
     entry[key] = eArr
   })
 
-  return eArr
+  return entry
 }
 
 function getHtmlConfig() {
@@ -37,7 +35,7 @@ function getHtmlConfig() {
 module.exports = {
   entry: getEntry(),
   output: {
-    path: path.resolve(__dirname, 'dist/js'),
+    path: path.resolve(__dirname, 'dist'),
     filename: '[name].js'
   },
   module: {
@@ -48,10 +46,43 @@ module.exports = {
         include: /src/,
         use: [
           {
-
+            loader: 'babel-loader'
           }
+        ]
+      },
+      {
+        test: /\.less$/,
+        exclude: /(node_modules)/,
+        include: /src/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: process.env.NODE_ENV === 'development',
+              reloadAll: true,
+            }
+          },
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [
+                require('autoprefixer')
+              ]
+            }
+          },
+          'less-loader'
         ]
       }
     ]
-  }
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      moduleFilename: function({ name }) {
+        return `${name.replace('js/', 'css/')}.css`
+      },
+      chunkFilename: '[id].css',
+    }),
+    new CleanWebpackPlugin()
+  ]
 }
