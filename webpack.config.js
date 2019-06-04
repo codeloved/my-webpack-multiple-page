@@ -85,7 +85,10 @@ module.exports = {
             options: {
               limit: 8192, // 小于8192b的图片,会直接打包到js文件,超过使用file-loader处理,并且所有的参数都会传递给file-loader,所以file-loader的参数也在此处配置
               name: '[name]-[hash].[ext]',  // file-loader配置
-              outputPath: 'assets/images',
+              // outputPath: 'assets/images',
+              outputPath: (url, resourcePath, context) => {
+
+              }
             }
           }
         ]
