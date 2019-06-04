@@ -625,7 +625,7 @@ eval("var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!\n * jQ
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = __webpack_require__.p + \"assets/images/icon.jpg\";\n\n//# sourceURL=webpack:///./src/assets/images/icon.jpg?");
+eval("module.exports = __webpack_require__.p + \"assets/images/icon-cd3007278a4ffd1f31530498fdbaac84.jpg\";\n\n//# sourceURL=webpack:///./src/assets/images/icon.jpg?");
 
 /***/ }),
 
