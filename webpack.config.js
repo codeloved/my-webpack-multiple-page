@@ -3,8 +3,7 @@ var path = require('path') // node模块
 var glob = require('glob') // 获取对应规则文件
 var HtmlWebpackPlugin = require('html-webpack-plugin') // 通过html模板生成HTML页面
 var MiniCssExtractPlugin = require('mini-css-extract-plugin') // 分离css
-var TransferWebpackPlugin = require('transfer-webpack-plugin') // 复制文件到指定文件夹
-var autoprefixer = require('autoprefixer') // 给浏览器加css兼容性前缀
+var CopyWebpackPlugin = require('copy-webpack-plugin') // 复制文件到指定文件夹
 var os = require('os') // node模块
 var portfinder = require('portfinder') // 发现可用端口
 var fs = require('fs') // node模块
@@ -66,12 +65,29 @@ module.exports = {
           {
             loader: 'postcss-loader',
             options: {
-              plugins: [
-                require('autoprefixer')
+              ident: 'postcss',
+              plugins: (loader) => [
+                require('postcss-import')({ root: loader.resourcePath }), // 解决@import引入路径问题,可以找到node_modules下的样式文件
+                require('postcss-cssnext')(), // 给样式的值加兼容性前缀 display:-ms-flexbox;
+                require('autoprefixer')(), // 给样式的key加兼容性前缀 -webkit-transform
+                require('cssnano')() // 压缩css
               ]
             }
           },
           'less-loader'
+        ]
+      },
+      {
+        test:/\.(png|jpg|gif|jpeg)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192, // 小于8192b的图片,会直接打包到js文件,超过使用file-loader处理,并且所有的参数都会传递给file-loader,所以file-loader的参数也在此处配置
+              name: '[name].[ext]',  // file-loader配置
+              outputPath: 'assets/images',
+            }
+          }
         ]
       }
     ]
@@ -83,6 +99,15 @@ module.exports = {
       },
       chunkFilename: '[id].css',
     }),
-    new CleanWebpackPlugin()
+    new CleanWebpackPlugin(),
+    new webpack.ProvidePlugin({ // 此方法会自动加载模块,不需要再源码中import和require,且是全局模块,全局都可以使用,并且不使用的模块,jquery就不会打包进来
+      $: 'jquery'
+    }),
+    new CopyWebpackPlugin([
+      {
+        from: 'src/public',  // Copy directory contents to {output}/to/directory/ { from: 'from/directory', to: 'to/directory' }
+        to: 'public'
+      }
+    ])
   ]
 }

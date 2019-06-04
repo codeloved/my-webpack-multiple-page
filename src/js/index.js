@@ -4,6 +4,12 @@ import '../css/index.less'
 var a = 12
 console.log(a)
 var promise = new Promise()
-var a = () => {
+var aaaa = () => {
 
 }
+
+console.log($)
+
+import icon from '../assets/images/icon.jpg'
+
+console.log(icon)
