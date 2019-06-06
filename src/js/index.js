@@ -4,7 +4,7 @@ import '../css/index.less'
 var a = 12
 console.log(a)
 var promise = new Promise()
-var aaaa = () => {
+var aaa = () => {
 
 }
 

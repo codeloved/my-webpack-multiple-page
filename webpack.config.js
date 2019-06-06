@@ -4,9 +4,6 @@ var glob = require('glob') // 获取对应规则文件
 var HtmlWebpackPlugin = require('html-webpack-plugin') // 通过html模板生成HTML页面
 var MiniCssExtractPlugin = require('mini-css-extract-plugin') // 分离css
 var CopyWebpackPlugin = require('copy-webpack-plugin') // 复制文件到指定文件夹
-var os = require('os') // node模块
-var portfinder = require('portfinder') // 发现可用端口
-var fs = require('fs') // node模块
 var { CleanWebpackPlugin } = require('clean-webpack-plugin') // 清除webpack打包目录
 var ManifestPlugin = require('webpack-manifest-plugin')
 
@@ -28,15 +25,11 @@ function getEntry() {
   return entry
 }
 
-function getHtmlConfig() {
-
-}
-
 module.exports = {
   entry: getEntry(),
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name]-[chunkhash].js'
   },
   module: {
     rules: [
@@ -103,8 +96,9 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      moduleFilename: function({ name }) {
-        return `${name.replace('js/', 'css/')}.css`
+      // f759, c63d, css/mini-extract
+      moduleFilename: function({ name, contentHash }) {
+        return `${name.replace('js/', 'css/')}-${contentHash['css/mini-extract']}.css`
       },
       chunkFilename: '[id].css',
     }),
@@ -118,7 +112,8 @@ module.exports = {
         to: 'public'
       }
     ]),
-    new ManifestPlugin()
+    new ManifestPlugin(),
+    new HtmlWebpackPlugin()
   ],
   devServer: { // dist下不会有相应文件夹,在内存里,但是可以访问到
     contentBase: path.join(__dirname, 'dist'),
